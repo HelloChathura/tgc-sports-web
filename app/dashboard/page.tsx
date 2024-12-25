@@ -124,7 +124,7 @@ export default function PoolClubManager() {
       toast.success("Game Started for Table No: "+ tableId , {
         autoClose: 5000,
       });
-    } catch (error) {
+    } catch {
         toast.error("Failed to start the game. Please try again.");
       } 
   };
@@ -175,7 +175,7 @@ const finalizeEndGame = async () => {
       toast.success("Game successfully ended.", {
         autoClose: 5000,
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to start the game. Please try again.");
     }
   };
