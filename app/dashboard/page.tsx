@@ -63,9 +63,17 @@ export default function PoolClubManager() {
         endTime: Date | null;
         bill: number | null;
       }
+
+      interface BilliardSession {
+        tableId: number;
+        playerName: string;
+        startTime: string | null;
+        endTime: string | null;
+        totalAmount: number | null;
+      }
   
       // Map API response to occupied tables
-      const occupiedTables: Table[] = sessions.map((session: any, index: number) => ({
+      const occupiedTables: Table[] = sessions.map((session: BilliardSession, index: number) => ({
         id: session.tableId || index + 1, // Ensure unique IDs
         occupied: true,
         occupant: session.playerName || "",
