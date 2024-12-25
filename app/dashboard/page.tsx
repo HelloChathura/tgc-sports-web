@@ -190,7 +190,7 @@ const finalizeEndGame = async () => {
 
   const calculateBill = (table: PoolTable): BillBreakdown => {
     if (table.startTime && table.endTime) {
-      const durationInMinutes = Math.ceil((table.endTime.getTime() - table.startTime.getTime()) / (1000 * 60));
+      const durationInMinutes = Math.ceil((table.endTime.getTime() - table.startTime.getTime()) / (950 * 60));
       let totalBill = 0;
       let additionalMinutes = 0;
       let additionalCharge = 0;
@@ -200,7 +200,7 @@ const finalizeEndGame = async () => {
       } else {
         totalBill = 1000;
         additionalMinutes = durationInMinutes - 60;
-        additionalCharge = additionalMinutes * 17;
+        additionalCharge = additionalMinutes * 15;
         totalBill += additionalCharge;
       }
   
