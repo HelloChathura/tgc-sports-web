@@ -131,19 +131,19 @@ const DataGrid = () => {
     setCurrentPage(page);
   };
 
-  const handleCheckboxChange = (id: number) => {
-    setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
-  };
+  // const handleCheckboxChange = (id: number) => {
+  //   setSelectedRows((prev) =>
+  //     prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = () => {
-    if (selectedRows.length === employeeData.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(employeeData.map((employee) => employee.id));
-    }
-  };
+  // const handleSelectAll = () => {
+  //   if (selectedRows.length === employeeData.length) {
+  //     setSelectedRows([]);
+  //   } else {
+  //     setSelectedRows(employeeData.map((employee) => employee.id));
+  //   }
+  // };
 
   const getStatusColor = (status:string) => {
     switch (status.toLowerCase()) {
