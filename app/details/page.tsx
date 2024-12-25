@@ -5,7 +5,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const DataGrid = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  // const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
 
   const employeeData = [

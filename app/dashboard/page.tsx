@@ -36,21 +36,21 @@ export default function PoolClubManager() {
 //     { id: 3, occupied: false, occupant: "", startTime: null, endTime: null, bill: null },
 //   ])
 
-  const [error, setError] = useState<string | null>(null); 
+  // const [error, setError] = useState<string | null>(null); 
   const [endGameConfirmOpen, setEndGameConfirmOpen] = useState(false)
   const [endGameReceiptOpen, setEndGameReceiptOpen] = useState(false)
   const [startGameDialogOpen, setStartGameDialogOpen] = useState(false)
   const [currentTable, setCurrentTable] = useState<PoolTable | null>(null)
   const [tableToStart, setTableToStart] = useState<PoolTable | null>(null)
-  const [loggedInUser, setLoggedInUser] = useState("John Doe")
+  // const [loggedInUser, setLoggedInUser] = useState("John Doe")
   const [billBreakdown, setBillBreakdown] = useState<BillBreakdown | null>(null)
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
 
   ////////////////////////////////////
   const fetchBilliardTableSessions = async () => {
     try {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api';
+        //const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api';
       const response = await fetch("http://sportsapi.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions");
       const sessions = await response.json();
   
@@ -117,7 +117,7 @@ export default function PoolClubManager() {
 
     try {
     
-     const result = await startGame(tableId, occupant,user?.firstName??'',user?.id??'');
+     await startGame(tableId, occupant,user?.firstName??'',user?.id??'');
       setStartGameDialogOpen(false)
        setTableToStart(null)
       fetchBilliardTableSessions(); // Recall List API
@@ -165,7 +165,7 @@ const finalizeEndGame = async () => {
     try {
            if (currentTable && billBreakdown) {
          //Call End API
-         const result = await endGame(currentTable.id,billBreakdown.totalMinutes,billBreakdown.initialCharge,billBreakdown.additionalCharge,
+         await endGame(currentTable.id,billBreakdown.totalMinutes,billBreakdown.initialCharge,billBreakdown.additionalCharge,
             billBreakdown.totalBill,user?.firstName??'',user?.id??'');
          setEndGameReceiptOpen(false)
          setCurrentTable(null)
@@ -176,7 +176,7 @@ const finalizeEndGame = async () => {
         autoClose: 5000,
       });
     } catch (error) {
-     
+      toast.error("Failed to start the game. Please try again.");
     }
   };
 
@@ -227,12 +227,12 @@ const finalizeEndGame = async () => {
     window.print()
   }
 
-  const handleLogout = () => {
-    console.log("User logged out")
-    toast.success("Logout.", {
-        autoClose: 5000,
-      });
-  }
+  // const handleLogout = () => {
+  //   console.log("User logged out")
+  //   toast.success("Logout.", {
+  //       autoClose: 5000,
+  //     });
+  // }
 
   return (
     
