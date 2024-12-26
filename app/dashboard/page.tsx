@@ -196,9 +196,9 @@ const finalizeEndGame = async () => {
       let additionalCharge = 0;
   
       if (durationInMinutes <= 70) {
-        totalBill = 1000;
+        totalBill = 950;
       } else {
-        totalBill = 1000;
+        totalBill = 950;
         additionalMinutes = durationInMinutes - 60;
         additionalCharge = additionalMinutes * 15;
         totalBill += additionalCharge;
@@ -208,7 +208,7 @@ const finalizeEndGame = async () => {
       additionalCharge = parseFloat(additionalCharge.toFixed(2));
   
       return {
-        initialCharge: 1000,
+        initialCharge: 950,
         additionalCharge,
         totalBill,
         totalMinutes: durationInMinutes,
