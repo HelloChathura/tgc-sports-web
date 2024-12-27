@@ -1,10 +1,30 @@
-
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api'; 
 
 export async function fetchBilliardTableSessions() {
   try {
-    const response = await fetch(`http://sportsapi.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
+    const response = await fetch(`https://localhost:44381/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
+   
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching data: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; 
+  }
+}
+
+export async function fetchAllBilliardTableSessions() {
+  try {
+    const response = await fetch(`https://localhost:44381/api/BilliardTable/GetAllBilliardTableSessions`, {
    
       method: 'GET',
       headers: {
@@ -28,7 +48,7 @@ export async function fetchBilliardTableSessions() {
 export async function startGame(tableId: number, playerName: string,gameStartedStaffName : string,createdBy:string) {
 
     try {
-      const response = await fetch(`http://sportsapi.runasp.net/api/BilliardTable/StartGame`, {
+      const response = await fetch(`https://localhost:44381/api/BilliardTable/StartGame`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +77,7 @@ export async function startGame(tableId: number, playerName: string,gameStartedS
 export async function endGame(tableId: number,totaltimeinminutes:Number,baseAmount:Number,additionalAmount:Number,
   totalAmount:Number,gameEndedStaffName:string,updatedBy:string) {
     try {
-      const response = await fetch(`http://sportsapi.runasp.net/api/BilliardTable/EndGame`, {
+      const response = await fetch(`https://localhost:44381/api/BilliardTable/EndGame`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,4 +104,26 @@ export async function endGame(tableId: number,totaltimeinminutes:Number,baseAmou
       throw error;
     }
   }
+
+  export async function fetchEarningsSummary() { 
+    try {
+      const response = await fetch('https://localhost:44381/api/BilliardTable/GetEarningsSummary', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error; 
+    }
+  }
+  
 

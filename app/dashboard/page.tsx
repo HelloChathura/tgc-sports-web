@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { useUser } from '@clerk/nextjs';
 import {startGame,endGame } from '@/services/api';
 import { toast } from "react-toastify";
+import Link from 'next/link';
 
 interface PoolTable {
   id: number
@@ -36,22 +37,20 @@ export default function PoolClubManager() {
 //     { id: 3, occupied: false, occupant: "", startTime: null, endTime: null, bill: null },
 //   ])
 
-  // const [error, setError] = useState<string | null>(null); 
   const [endGameConfirmOpen, setEndGameConfirmOpen] = useState(false)
   const [endGameReceiptOpen, setEndGameReceiptOpen] = useState(false)
   const [startGameDialogOpen, setStartGameDialogOpen] = useState(false)
   const [currentTable, setCurrentTable] = useState<PoolTable | null>(null)
   const [tableToStart, setTableToStart] = useState<PoolTable | null>(null)
-  // const [loggedInUser, setLoggedInUser] = useState("John Doe")
   const [billBreakdown, setBillBreakdown] = useState<BillBreakdown | null>(null)
-  // const [isLoading, setIsLoading] = useState(false);
+
 
 
   ////////////////////////////////////
   const fetchBilliardTableSessions = async () => {
     try {
         //const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api';
-      const response = await fetch("http://sportsapi.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions");
+      const response = await fetch("https://localhost:44381/api/BilliardTable/GetAllBilliardTableActiveSessions");
       const sessions = await response.json();
   
       // Define the type for a table
@@ -231,24 +230,22 @@ const finalizeEndGame = async () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   }
 
-  const handlePrint = () => {
-    window.print()
-  }
-
-  // const handleLogout = () => {
-  //   console.log("User logged out")
-  //   toast.success("Logout.", {
-  //       autoClose: 5000,
-  //     });
-  // }
 
   return (
     
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 p-4">
-      <div className="container mx-auto">
-        <div className="mb-8 flex items-center justify-between rounded-lg bg-white bg-opacity-80 p-4 shadow-lg backdrop-blur-sm">
-          <h1 className="text-3xl font-bold text-gray-900">TGC Pool Club Table Management</h1>
-        </div>
+  <div className="container mx-auto">
+    <div className="mb-8 flex items-center justify-between rounded-lg bg-white bg-opacity-80 p-4 shadow-lg backdrop-blur-sm">
+      <h1 className="text-3xl font-bold text-gray-900">TGC Pool Club Table Management</h1>
+      <button
+        onClick={() => window.location.href = '/details'}
+        className="ml-auto text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
+      >
+      Past Sessions
+      </button>
+    </div>
+
+
 
         <div className="grid gap-8 md:grid-cols-3">
           {poolTables.map((table) => (
@@ -431,13 +428,7 @@ const finalizeEndGame = async () => {
           )}
     
     <DialogFooter className="sm:justify-start">
-  <Button
-    type="button"
-    onClick={handlePrint}
-    className="bg-green-500 hover:bg-green-600"
-  >
-    Print Receipt
-  </Button>
+
   <Button
     type="button"
     onClick={finalizeEndGame}
