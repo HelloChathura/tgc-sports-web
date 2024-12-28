@@ -1,8 +1,9 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api'; 
+
 
 export async function fetchBilliardTableSessions() {
   try {
-    const response = await fetch(`https://localhost:44381/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
+ 
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
    
       method: 'GET',
       headers: {
@@ -24,7 +25,8 @@ export async function fetchBilliardTableSessions() {
 
 export async function fetchAllBilliardTableSessions() {
   try {
-    const response = await fetch(`https://localhost:44381/api/BilliardTable/GetAllBilliardTableSessions`, {
+    const token = localStorage.getItem('authToken');
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableSessions`, {
    
       method: 'GET',
       headers: {
@@ -48,7 +50,7 @@ export async function fetchAllBilliardTableSessions() {
 export async function startGame(tableId: number, playerName: string,gameStartedStaffName : string,createdBy:string) {
 
     try {
-      const response = await fetch(`https://localhost:44381/api/BilliardTable/StartGame`, {
+      const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/StartGame`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +79,7 @@ export async function startGame(tableId: number, playerName: string,gameStartedS
 export async function endGame(tableId: number,totaltimeinminutes:Number,baseAmount:Number,additionalAmount:Number,
   totalAmount:Number,gameEndedStaffName:string,updatedBy:string) {
     try {
-      const response = await fetch(`https://localhost:44381/api/BilliardTable/EndGame`, {
+      const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/EndGame`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +109,7 @@ export async function endGame(tableId: number,totaltimeinminutes:Number,baseAmou
 
   export async function fetchEarningsSummary() { 
     try {
-      const response = await fetch('https://localhost:44381/api/BilliardTable/GetEarningsSummary', {
+      const response = await fetch('https://tgc-sports-api.runasp.net/api/BilliardTable/GetEarningsSummary', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

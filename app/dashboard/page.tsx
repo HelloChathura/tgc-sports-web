@@ -29,14 +29,9 @@ interface BillBreakdown {
 
 
 export default function PoolClubManager() {
-    const { user, isLoaded, isSignedIn } = useUser();
-    const [poolTables, setPoolTables] = useState<PoolTable[]>([]);
-//   const [poolTables, setPoolTables] = useState<PoolTable[]>([
-//     { id: 1, occupied: false, occupant: "", startTime: null, endTime: null, bill: null },
-//     { id: 2, occupied: false, occupant: "", startTime: null, endTime: null, bill: null },
-//     { id: 3, occupied: false, occupant: "", startTime: null, endTime: null, bill: null },
-//   ])
 
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [poolTables, setPoolTables] = useState<PoolTable[]>([]);
   const [endGameConfirmOpen, setEndGameConfirmOpen] = useState(false)
   const [endGameReceiptOpen, setEndGameReceiptOpen] = useState(false)
   const [startGameDialogOpen, setStartGameDialogOpen] = useState(false)
@@ -45,15 +40,11 @@ export default function PoolClubManager() {
   const [billBreakdown, setBillBreakdown] = useState<BillBreakdown | null>(null)
 
 
-
-  ////////////////////////////////////
   const fetchBilliardTableSessions = async () => {
     try {
-        //const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:44381/api';
-      const response = await fetch("https://localhost:44381/api/BilliardTable/GetAllBilliardTableActiveSessions");
+      const response = await fetch("https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions");
       const sessions = await response.json();
   
-      // Define the type for a table
       interface Table {
         id: number;
         occupied: boolean;
