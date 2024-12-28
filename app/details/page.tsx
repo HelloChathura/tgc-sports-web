@@ -20,10 +20,22 @@ interface Session {
   totalTimeInMinutes?:number;
 }
 
+interface Session {
+  isActive: boolean;
+  isTableInUse: boolean;
+  status?: string | undefined;
+}
+
+interface EarningsSummary {
+  lastMonthEarnings: number;
+  currentMonthEarnings: number;
+  lastYearEarnings: number;
+}
+
 const DataGrid = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sessionData, setSessionData] = useState<Session[]>([]);
-  const [earningsSummary, setEarningsSummary] = useState<any>(null);
+  const [earningsSummary, setEarningsSummary] = useState<EarningsSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 5;
@@ -44,7 +56,7 @@ const DataGrid = () => {
               : "Unknown",
         }));
 
-        const sortedData = updatedData.sort((a: any, b: any) => {
+        const sortedData = updatedData.sort((a: Session, b: Session) => {
           if (a.status === "Ongoing" && b.status !== "Ongoing") return -1;
           if (a.status !== "Ongoing" && b.status === "Ongoing") return 1;
           return 0;

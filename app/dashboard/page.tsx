@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { useUser } from '@clerk/nextjs';
 import {startGame,endGame } from '@/services/api';
 import { toast } from "react-toastify";
-import Link from 'next/link';
+
 
 interface PoolTable {
   id: number
