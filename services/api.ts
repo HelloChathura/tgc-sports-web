@@ -5,6 +5,7 @@ export async function fetchBilliardTableSessions() {
  
     const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
    
+      
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -25,9 +26,9 @@ export async function fetchBilliardTableSessions() {
 
 export async function fetchAllBilliardTableSessions() {
   try {
-    const token = localStorage.getItem('authToken');
+
     const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableSessions`, {
-   
+
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -51,6 +52,7 @@ export async function startGame(tableId: number, playerName: string,gameStartedS
 
     try {
       const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/StartGame`, {
+  
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,6 +82,7 @@ export async function endGame(tableId: number,totaltimeinminutes:Number,baseAmou
   totalAmount:Number,gameEndedStaffName:string,updatedBy:string) {
     try {
       const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/EndGame`, {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
