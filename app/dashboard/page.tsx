@@ -181,32 +181,43 @@ const finalizeEndGame = async () => {
 
   const calculateBill = (table: PoolTable): BillBreakdown => {
     if (table.startTime && table.endTime) {
-      const durationInMinutes = Math.ceil((table.endTime.getTime() - table.startTime.getTime()) / (950 * 60));
+      const durationInMinutes = Math.ceil(
+        (table.endTime.getTime() - table.startTime.getTime()) / (1000 * 60)
+      ); // Convert milliseconds to minutes
+      const hourlyRate = 950;
+      const perMinuteRate = hourlyRate / 60; // Rate per minute
       let totalBill = 0;
-      let additionalMinutes = 0;
-      let additionalCharge = 0;
   
-      if (durationInMinutes <= 70) {
-        totalBill = 950;
+      if (durationInMinutes <= 65) {
+        // 1 hour or less (including up to 65 minutes)
+        totalBill = hourlyRate;
       } else {
-        totalBill = 950;
-        additionalMinutes = durationInMinutes - 60;
-        additionalCharge = additionalMinutes * 15;
-        totalBill += additionalCharge;
+        const fullHours = Math.floor(durationInMinutes / 60); // Number of full hours
+        const remainingMinutes = durationInMinutes % 60; // Minutes beyond full hours
+  
+        // Calculate the base charge for full hours
+        totalBill = fullHours * hourlyRate;
+  
+        // Add charges for remaining minutes beyond the 5-minute grace period
+        if (remainingMinutes > 5) {
+          const extraMinutes = remainingMinutes - 5; // Minutes to charge
+          const extraCharge = extraMinutes * perMinuteRate;
+          totalBill += extraCharge;
+        }
       }
   
-      totalBill = parseFloat(totalBill.toFixed(2));
-      additionalCharge = parseFloat(additionalCharge.toFixed(2));
+      totalBill = parseFloat(totalBill.toFixed(2)); // Ensure two decimal precision
   
       return {
-        initialCharge: 950,
-        additionalCharge,
+        initialCharge: hourlyRate,
+        additionalCharge: totalBill > hourlyRate ? totalBill - hourlyRate : 0,
         totalBill,
         totalMinutes: durationInMinutes,
-        additionalMinutes,
+        additionalMinutes: Math.max(0, durationInMinutes - 60), // Minutes beyond the first hour
       };
     }
   
+    // Return empty breakdown if startTime or endTime is missing
     return {
       initialCharge: 0,
       additionalCharge: 0,
@@ -215,7 +226,6 @@ const finalizeEndGame = async () => {
       additionalMinutes: 0,
     };
   };
-  
   
 
   const formatTime = (date: Date) => {
