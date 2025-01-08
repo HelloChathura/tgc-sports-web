@@ -181,29 +181,31 @@ const finalizeEndGame = async () => {
 
   const calculateBill = (table: PoolTable): BillBreakdown => {
     if (table.startTime && table.endTime) {
-      const durationInMinutes = Math.ceil(
-        (table.endTime.getTime() - table.startTime.getTime()) / (1000 * 60)
-      ); // Convert milliseconds to minutes
+      const startTime = table.startTime.getTime();
+      const endTime = table.endTime.getTime();
+  
+      // Ensure time difference is positive, even if crossing midnight
+      const durationInMinutes = Math.ceil((endTime - startTime) / (1000 * 60)); // Convert milliseconds to minutes
+  
       const hourlyRate = 950;
       const perMinuteRate = hourlyRate / 60; // Rate per minute
+  
       let totalBill = 0;
+      let fullHours = 0;
+      let additionalMinutes = 0;
   
+      // Case 1: For up to 65 minutes, the total bill is 950
       if (durationInMinutes <= 65) {
-        // 1 hour or less (including up to 65 minutes)
         totalBill = hourlyRate;
+        fullHours = 1;  // Consider as 1 hour
+        additionalMinutes = 0;
       } else {
-        const fullHours = Math.floor(durationInMinutes / 60); // Number of full hours
-        const remainingMinutes = durationInMinutes % 60; // Minutes beyond full hours
+        // Case 2: For durations greater than 65 minutes, calculate the total bill
+        fullHours = Math.floor(durationInMinutes / 60); // Full 60-minute blocks
+        additionalMinutes = durationInMinutes % 60; // Minutes beyond full hours
   
-        // Calculate the base charge for full hours
-        totalBill = fullHours * hourlyRate;
-  
-        // Add charges for remaining minutes beyond the 5-minute grace period
-        if (remainingMinutes > 5) {
-          const extraMinutes = remainingMinutes - 5; // Minutes to charge
-          const extraCharge = extraMinutes * perMinuteRate;
-          totalBill += extraCharge;
-        }
+        totalBill = fullHours * hourlyRate; // Charge for full hours
+        totalBill += additionalMinutes * perMinuteRate; // Charge for additional minutes after full hours
       }
   
       totalBill = parseFloat(totalBill.toFixed(2)); // Ensure two decimal precision
@@ -213,7 +215,7 @@ const finalizeEndGame = async () => {
         additionalCharge: totalBill > hourlyRate ? totalBill - hourlyRate : 0,
         totalBill,
         totalMinutes: durationInMinutes,
-        additionalMinutes: Math.max(0, durationInMinutes - 60), // Minutes beyond the first hour
+        additionalMinutes: Math.max(0, durationInMinutes - fullHours * 60), // Minutes beyond the last full hour
       };
     }
   
@@ -226,6 +228,10 @@ const finalizeEndGame = async () => {
       additionalMinutes: 0,
     };
   };
+  
+  
+  
+  
   
 
   const formatTime = (date: Date) => {
@@ -416,12 +422,12 @@ const finalizeEndGame = async () => {
                     {billBreakdown.additionalCharge > 0 && (
                       <p className="flex justify-between">
                         <span className="text-gray-600">Additional Charge:</span>
-                        <span className="font-medium text-gray-900">Rs: {billBreakdown.additionalCharge}</span>
+                        <span className="font-medium text-gray-900">Rs: {billBreakdown.additionalCharge.toFixed(2)}</span>
                       </p>
                     )}
                     <p className="flex justify-between text-lg font-bold mt-2">
                       <span>Total Bill:</span>
-                      <span className="text-blue-600">Rs: {billBreakdown.totalBill}</span>
+                      <span className="text-blue-600">Rs: {billBreakdown.totalBill.toFixed(2)}</span>
                     </p>
                   </div>
                 </div>
