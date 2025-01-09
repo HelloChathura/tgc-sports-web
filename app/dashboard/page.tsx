@@ -181,11 +181,31 @@ const finalizeEndGame = async () => {
 
   const calculateBill = (table: PoolTable): BillBreakdown => {
     if (table.startTime && table.endTime) {
-      const startTime = table.startTime.getTime();
-      const endTime = table.endTime.getTime();
+      // Normalize startTime and endTime to remove seconds
+      const startTime = new Date(
+        table.startTime.getFullYear(),
+        table.startTime.getMonth(),
+        table.startTime.getDate(),
+        table.startTime.getHours(),
+        table.startTime.getMinutes(),
+        0, // Zero out seconds
+        0  // Zero out milliseconds
+      );
   
-      // Ensure time difference is positive, even if crossing midnight
-      const durationInMinutes = Math.ceil((endTime - startTime) / (1000 * 60)); // Convert milliseconds to minutes
+      const endTime = new Date(
+        table.endTime.getFullYear(),
+        table.endTime.getMonth(),
+        table.endTime.getDate(),
+        table.endTime.getHours(),
+        table.endTime.getMinutes(),
+        0, // Zero out seconds
+        0  // Zero out milliseconds
+      );
+  
+      // Calculate duration in minutes (ignoring seconds)
+      const durationInMinutes = Math.ceil(
+        (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+      );
   
       const hourlyRate = 950;
       const perMinuteRate = hourlyRate / 60; // Rate per minute
@@ -215,7 +235,7 @@ const finalizeEndGame = async () => {
         additionalCharge: totalBill > hourlyRate ? totalBill - hourlyRate : 0,
         totalBill,
         totalMinutes: durationInMinutes,
-        additionalMinutes: Math.max(0, durationInMinutes - fullHours * 60), // Minutes beyond the last full hour
+        additionalMinutes,
       };
     }
   
@@ -228,6 +248,7 @@ const finalizeEndGame = async () => {
       additionalMinutes: 0,
     };
   };
+  
   
   
   
