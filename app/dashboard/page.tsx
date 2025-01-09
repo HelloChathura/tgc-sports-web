@@ -214,13 +214,24 @@ const finalizeEndGame = async () => {
       let fullHours = 0;
       let additionalMinutes = 0;
   
-      // Case 1: For up to 65 minutes, the total bill is 950
+      // Case 1: If duration is 0 minutes, total bill should be 0
+      if (durationInMinutes <= 0) {
+        return {
+          initialCharge: 0,
+          additionalCharge: 0,
+          totalBill: 0,
+          totalMinutes: 0,
+          additionalMinutes: 0,
+        };
+      }
+  
+      // Case 2: For up to 65 minutes, the total bill is 950
       if (durationInMinutes <= 65) {
         totalBill = hourlyRate;
-        fullHours = 1;  // Consider as 1 hour
+        fullHours = 1; // Consider as 1 hour
         additionalMinutes = 0;
       } else {
-        // Case 2: For durations greater than 65 minutes, calculate the total bill
+        // Case 3: For durations greater than 65 minutes, calculate the total bill
         fullHours = Math.floor(durationInMinutes / 60); // Full 60-minute blocks
         additionalMinutes = durationInMinutes % 60; // Minutes beyond full hours
   
@@ -248,6 +259,7 @@ const finalizeEndGame = async () => {
       additionalMinutes: 0,
     };
   };
+  
   
   
   
