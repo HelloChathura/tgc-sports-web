@@ -225,8 +225,8 @@ const finalizeEndGame = async () => {
         };
       }
   
-      // Case 2: For up to 65 minutes, the total bill is 950
-      if (durationInMinutes <= 65) {
+      // Case 2: For up to 63 minutes, the total bill is 950
+      if (durationInMinutes <= 63) {
         totalBill = hourlyRate;
         fullHours = 1; // Consider as 1 hour
         additionalMinutes = 0;
