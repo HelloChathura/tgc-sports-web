@@ -82,6 +82,38 @@ const DataGrid = () => {
     setCurrentPage(page);
   };
 
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push("...");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = sessionData.slice(startIndex, endIndex);
@@ -277,17 +309,20 @@ const DataGrid = () => {
               >
                 <FaChevronLeft />
               </button>
-              {[...Array(totalPages)].map((_, index) => (
+              {getPageNumbers().map((page, index) => (
                 <button
                   key={index}
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={() => typeof page === 'number' ? handlePageChange(page) : undefined}
+                  disabled={page === "..."}
                   className={`px-4 py-2 text-sm font-medium ${
-                    currentPage === index + 1
+                    currentPage === page
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
+                      : page === "..."
+                      ? "bg-transparent text-gray-800 cursor-default"
+                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                   } rounded`}
                 >
-                  {index + 1}
+                  {page}
                 </button>
               ))}
               <button
