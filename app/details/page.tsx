@@ -189,38 +189,44 @@ const DataGrid = () => {
     
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 p-4">
        <div className="container mx-auto">
-    <div className="mb-8 flex items-center justify-between rounded-lg bg-white bg-opacity-80 p-4 shadow-lg backdrop-blur-sm">
-      <h1 className="text-3xl font-bold text-gray-900">Billiard Table Sessions</h1>
-      <button
-        onClick={() => window.location.href = '/dashboard'}
-        className="ml-auto text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
-      >
-      Back to Dashboard
-      </button>
-    </div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-semibold"></h1>
-        <div className="flex space-x-4">
-          {earningsSummary && (
-            <>
-              <div className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                <p>Last Year: {earningsSummary.lastYearEarnings.toFixed(2)}</p>
-              </div>
-              <div className="bg-green-500 text-white px-4 py-2 rounded-md">
-                <p>Last Month: {earningsSummary.lastMonthEarnings.toFixed(2)}</p>
-              </div>
-              <div className="bg-purple-500 text-white px-4 py-2 rounded-md">
-                <p>This Month: {earningsSummary.currentMonthEarnings.toFixed(2)}</p>
-              </div>
-            </>
-          )}
-        </div>
+    <div className="mb-8 flex flex-col rounded-2xl bg-white p-6 shadow-xl relative overflow-hidden">
+      <div className="absolute -top-10 -right-10 w-64 h-64 bg-gradient-to-br from-blue-100 via-green-50 to-purple-100 opacity-60 blur-3xl rounded-full"></div>
+      
+      <div className="flex flex-row justify-between items-start md:items-center relative z-10 mb-6">
+        <h1 className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tracking-tight whitespace-nowrap">Billiard Table Sessions</h1>
+        <button
+          onClick={() => window.location.href = '/dashboard'}
+          className="text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
+        >
+          Back to Dashboard
+        </button>
       </div>
+      
+      <div className="flex flex-row justify-between gap-2 md:gap-4 relative z-10 w-full">
+        {earningsSummary && (
+          <>
+            <div className="bg-blue-50/80 backdrop-blur-sm border-2 border-blue-400 text-blue-900 p-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl flex-1 text-center sm:text-left">
+              <p className="text-[10px] md:text-xs text-gray-600 mb-1">Last Year:</p>
+              <p className="text-sm sm:text-base md:text-xl font-bold">{earningsSummary.lastYearEarnings.toFixed(2)}</p>
+            </div>
+            <div className="bg-green-50/80 backdrop-blur-sm border-2 border-green-400 text-green-900 p-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl flex-1 text-center sm:text-left">
+              <p className="text-[10px] md:text-xs text-gray-600 mb-1">Last Month:</p>
+              <p className="text-sm sm:text-base md:text-xl font-bold">{earningsSummary.lastMonthEarnings.toFixed(2)}</p>
+            </div>
+            <div className="bg-purple-50/80 backdrop-blur-sm border-2 border-purple-400 text-purple-900 p-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl flex-1 text-center sm:text-left">
+              <p className="text-[10px] md:text-xs text-gray-600 mb-1">This Month:</p>
+              <p className="text-sm sm:text-base md:text-xl font-bold">{earningsSummary.currentMonthEarnings.toFixed(2)}</p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="flex justify-center items-center h-40"><p className="text-lg font-medium text-gray-500">Loading...</p></div>
       ) : (
-        <div className="overflow-x-auto mt-10">
+        <>
+        <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-100 p-2">
           <table className="min-w-full table-auto">
             <thead className="bg-blue-200">
               <tr className="text-xs font-semibold uppercase text-gray-500">
@@ -289,18 +295,63 @@ const DataGrid = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile/Tablet Compact List View (Hidden on desktop) */}
+        <div className="md:hidden mt-4 space-y-2">
+          {currentData.map((session) => (
+            <div key={session.sessionId} className="bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3">
+              <div className="flex justify-between items-center mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-gray-900">#{session.sessionId}</span>
+                  <span className="text-sm font-semibold text-gray-700">Table {session.tableId}</span>
+                  <span className="text-sm text-gray-600">· {session.playerName}</span>
+                </div>
+                <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                  session.status === "Ongoing" ? "bg-green-100 text-green-700" : 
+                  session.status === "Ended" ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-700"
+                }`}>
+                  {session.status}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                <span>{moment(session.startTime).format("DD/MM/YY hh:mm A")}</span>
+                <span>→</span>
+                <span>{session.endTime ? moment(session.endTime).format("DD/MM/YY hh:mm A") : "N/A"}</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4 text-xs text-gray-700">
+                  <span>{session.totalTimeInMinutes} min</span>
+                  <span className="font-semibold text-sm text-gray-900">Rs {session.totalAmount}</span>
+                </div>
+                <button
+                  onClick={() => generatePDF(session)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    session.status === "Ongoing" 
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                  disabled={session.status === "Ongoing"}
+                >
+                  Print Receipt
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
       )}
 
       {!loading && (
-        <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-          <div className="flex justify-between items-center mt-4 w-full">
-            <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to{" "}
-              {Math.min(endIndex, sessionData.length)} of {sessionData.length}{" "}
-              results
-            </div>
-            <div className="flex space-x-2">
-              <button
+        <div className="flex flex-col md:flex-row items-center justify-between py-6 px-4 md:px-0 w-full gap-4">
+          <div className="text-sm text-gray-700 w-full text-center md:text-left md:w-auto">
+            Showing {startIndex + 1} to{" "}
+            {Math.min(endIndex, sessionData.length)} of {sessionData.length}{" "}
+            results
+          </div>
+          <div className="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
+            <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`px-4 py-2 text-sm font-medium ${
@@ -334,7 +385,6 @@ const DataGrid = () => {
               >
                 <FaChevronRight />
               </button>
-            </div>
           </div>
         </div>
       )}

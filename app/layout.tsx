@@ -60,7 +60,7 @@ export default function RootLayout({
           </header>
           {/* Include the ClientRedirect component */}
           <ClientRedirect />
-          <main style={{ flex: 1 }}>{children}</main>
+          <main style={{ flex: 1, overflowY: "auto" }}>{children}</main>
           <ToastContainer theme="colored" />
         </body>
       </html>
