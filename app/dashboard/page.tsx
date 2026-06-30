@@ -42,7 +42,7 @@ export default function PoolClubManager() {
 
   const fetchBilliardTableSessions = async () => {
     try {
-      const response = await fetch("https://localhost:7098/api/BilliardTable/GetAllBilliardTableActiveSessions");
+      const response = await fetch("https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions");
 
       const sessions = await response.json();
 

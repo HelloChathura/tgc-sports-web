@@ -3,7 +3,7 @@
 export async function fetchBilliardTableSessions() {
   try {
 
-    const response = await fetch(`https://localhost:7098/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions`, {
 
 
       method: 'GET',
@@ -27,7 +27,7 @@ export async function fetchBilliardTableSessions() {
 export async function fetchAllBilliardTableSessions() {
   try {
 
-    const response = await fetch(`https://localhost:7098/api/BilliardTable/GetAllBilliardTableSessions`, {
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableSessions`, {
 
       method: 'GET',
       headers: {
@@ -51,7 +51,7 @@ export async function fetchAllBilliardTableSessions() {
 export async function startGame(tableId: number, playerName: string, gameStartedStaffName: string, createdBy: string) {
 
   try {
-    const response = await fetch(`https://localhost:7098/api/BilliardTable/StartGame`, {
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/StartGame`, {
 
       method: 'POST',
       headers: {
@@ -81,7 +81,7 @@ export async function startGame(tableId: number, playerName: string, gameStarted
 export async function endGame(tableId: number, totaltimeinminutes: Number, baseAmount: Number, additionalAmount: Number,
   totalAmount: Number, gameEndedStaffName: string, updatedBy: string) {
   try {
-    const response = await fetch(`https://localhost:7098/api/BilliardTable/EndGame`, {
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/EndGame`, {
 
       method: 'POST',
       headers: {
@@ -112,7 +112,7 @@ export async function endGame(tableId: number, totaltimeinminutes: Number, baseA
 
 export async function fetchEarningsSummary() {
   try {
-    const response = await fetch('https://localhost:7098/api/BilliardTable/GetEarningsSummary', {
+    const response = await fetch('https://tgc-sports-api.runasp.net/api/BilliardTable/GetEarningsSummary', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export async function fetchEarningsSummary() {
 
 export async function fetchEarningsReportByDateRange(fromDate: string, toDate: string) {
   try {
-    const response = await fetch(`https://localhost:7098/api/BilliardTable/GetEarningsReportByDateRange?fromDate=${fromDate}&toDate=${toDate}`, {
+    const response = await fetch(`https://tgc-sports-api.runasp.net/api/BilliardTable/GetEarningsReportByDateRange?fromDate=${fromDate}&toDate=${toDate}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
