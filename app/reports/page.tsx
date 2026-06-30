@@ -22,6 +22,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  PieChart,
+  Pie,
 } from "recharts";
 
 interface TableEarningsDto {
@@ -68,6 +70,8 @@ interface BilliardEarningsReportDto {
   dailyBreakdown: DailyEarningsDto[];
   sessions: BilliardSessionDetailDto[];
 }
+
+const PIE_COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444", "#14b8a6", "#6366f1"];
 
 export default function EarningsReportPage() {
   const router = useRouter();
@@ -170,6 +174,18 @@ export default function EarningsReportPage() {
       }
     });
     return Object.keys(map).sort().map((k) => map[k]);
+  }, [report]);
+
+  const tableRevenuePieData = React.useMemo(() => {
+    if (!report?.tableBreakdown) return [];
+    return report.tableBreakdown
+      .filter((t) => (t.totalEarnings || 0) > 0)
+      .map((t, index) => ({
+        name: t.tableName || `Table ${t.tableId}`,
+        value: t.totalEarnings,
+        tableId: t.tableId,
+        color: PIE_COLORS[index % PIE_COLORS.length],
+      }));
   }, [report]);
 
   // Generate Excel (CSV format)
@@ -646,43 +662,97 @@ export default function EarningsReportPage() {
                 
                 {/* 1. Table Breakdown Tab */}
                 {activeTab === "tables" && (
-                  <div className="overflow-x-auto rounded-lg border border-gray-100">
-                    <table className="min-w-[750px] w-full border-collapse text-left text-sm text-gray-500 bg-white">
-                      <thead className="bg-gray-50 text-xs uppercase text-gray-700 font-bold">
-                        <tr>
-                          <th className="px-6 py-3">Table ID</th>
-                          <th className="px-6 py-3">Table Name</th>
-                          <th className="px-6 py-3 text-center">Sessions Logged</th>
-                          <th className="px-6 py-3">Base Amount</th>
-                          <th className="px-6 py-3">Additional Amount</th>
-                          <th className="px-6 py-3 font-semibold text-blue-600">Total Earnings</th>
-                          <th className="px-6 py-3">Playtime Duration</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {report.tableBreakdown.length === 0 ? (
+                  <div className="space-y-6">
+                    <div className="rounded-xl border border-gray-100 bg-gradient-to-br from-blue-50/80 to-purple-50/80 p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-bold text-gray-700">Revenue Share by Table</h3>
+                          <p className="text-xs text-gray-500">Donut chart showing each table’s contribution to the selected period.</p>
+                        </div>
+                      </div>
+
+                      {tableRevenuePieData.length === 0 ? (
+                        <div className="flex h-56 items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white/70 text-sm text-gray-400">
+                          No table revenue data available for this range.
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+                          <div className="h-64 w-full lg:w-2/3">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart>
+                                <Pie
+                                  data={tableRevenuePieData}
+                                  dataKey="value"
+                                  nameKey="name"
+                                  innerRadius={60}
+                                  outerRadius={95}
+                                  paddingAngle={2}
+                                >
+                                  {tableRevenuePieData.map((entry) => (
+                                    <Cell key={entry.name} fill={entry.color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip
+                                  formatter={(value) => [formatCurrency(Number(value ?? 0)), "Revenue"]}
+                                />
+                                <Legend verticalAlign="bottom" height={36} />
+                              </PieChart>
+                            </ResponsiveContainer>
+                          </div>
+
+                          <div className="w-full lg:w-1/3 space-y-2">
+                            {tableRevenuePieData.map((item) => (
+                              <div key={item.name} className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm shadow-sm">
+                                <div className="flex items-center gap-2">
+                                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                                  <span className="font-medium text-gray-700">{item.name}</span>
+                                </div>
+                                <span className="font-semibold text-gray-900">{formatCurrency(item.value)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="overflow-x-auto rounded-lg border border-gray-100">
+                      <table className="min-w-[750px] w-full border-collapse text-left text-sm text-gray-500 bg-white">
+                        <thead className="bg-gray-50 text-xs uppercase text-gray-700 font-bold">
                           <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-gray-400">
-                              No table breakdown data found.
-                            </td>
+                            <th className="px-6 py-3">Table ID</th>
+                            <th className="px-6 py-3">Table Name</th>
+                            <th className="px-6 py-3 text-center">Sessions Logged</th>
+                            <th className="px-6 py-3">Base Amount</th>
+                            <th className="px-6 py-3">Additional Amount</th>
+                            <th className="px-6 py-3 font-semibold text-blue-600">Total Earnings</th>
+                            <th className="px-6 py-3">Playtime Duration</th>
                           </tr>
-                        ) : (
-                          report.tableBreakdown.map((t) => (
-                            <tr key={t.tableId} className="hover:bg-gray-50 transition-colors">
-                              <td className="px-6 py-4 font-medium text-gray-900">#{t.tableId}</td>
-                              <td className="px-6 py-4 font-semibold text-gray-800">
-                                {t.tableName || `Table ${t.tableId}`}
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {report.tableBreakdown.length === 0 ? (
+                            <tr>
+                              <td colSpan={7} className="px-6 py-4 text-center text-gray-400">
+                                No table breakdown data found.
                               </td>
-                              <td className="px-6 py-4 text-center font-medium text-gray-700">{t.sessionCount}</td>
-                              <td className="px-6 py-4">{formatCurrency(t.totalBaseAmount)}</td>
-                              <td className="px-6 py-4">{formatCurrency(t.totalAdditionalAmount)}</td>
-                              <td className="px-6 py-4 font-bold text-gray-900">{formatCurrency(t.totalEarnings)}</td>
-                              <td className="px-6 py-4 font-medium">{formatPlaytime(t.totalMinutesPlayed)}</td>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                          ) : (
+                            report.tableBreakdown.map((t) => (
+                              <tr key={t.tableId} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4 font-medium text-gray-900">#{t.tableId}</td>
+                                <td className="px-6 py-4 font-semibold text-gray-800">
+                                  {t.tableName || `Table ${t.tableId}`}
+                                </td>
+                                <td className="px-6 py-4 text-center font-medium text-gray-700">{t.sessionCount}</td>
+                                <td className="px-6 py-4">{formatCurrency(t.totalBaseAmount)}</td>
+                                <td className="px-6 py-4">{formatCurrency(t.totalAdditionalAmount)}</td>
+                                <td className="px-6 py-4 font-bold text-gray-900">{formatCurrency(t.totalEarnings)}</td>
+                                <td className="px-6 py-4 font-medium">{formatPlaytime(t.totalMinutesPlayed)}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
 
