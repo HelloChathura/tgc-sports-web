@@ -6,7 +6,7 @@ import { Input } from "@/app/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/app/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/app/components/ui/dialog"
 import { useUser } from '@clerk/nextjs';
-import {startGame,endGame } from '@/services/api';
+import { startGame, endGame } from '@/services/api';
 import { toast } from "react-toastify";
 
 
@@ -42,10 +42,10 @@ export default function PoolClubManager() {
 
   const fetchBilliardTableSessions = async () => {
     try {
-      const response = await fetch("https://tgc-sports-api.runasp.net/api/BilliardTable/GetAllBilliardTableActiveSessions");
+      const response = await fetch("https://localhost:7098/api/BilliardTable/GetAllBilliardTableActiveSessions");
 
       const sessions = await response.json();
-  
+
       interface Table {
         id: number;
         occupied: boolean;
@@ -62,7 +62,7 @@ export default function PoolClubManager() {
         endTime: string | null;
         totalAmount: number | null;
       }
-  
+
       // Map API response to occupied tables
       const occupiedTables: Table[] = sessions.map((session: BilliardSession, index: number) => ({
         id: session.tableId || index + 1, // Ensure unique IDs
@@ -72,7 +72,7 @@ export default function PoolClubManager() {
         endTime: session.endTime ? new Date(session.endTime) : null,
         bill: session.totalAmount || null,
       }));
-  
+
       // Fill in the remaining tables with default values
       const allTables: Table[] = Array.from({ length: 3 }, (_, index) => {
         const tableIndex = index + 1;
@@ -87,21 +87,21 @@ export default function PoolClubManager() {
           }
         );
       });
-  
+
       setPoolTables(allTables);
     } catch (error) {
       console.error("Failed to fetch billiard table sessions:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchBilliardTableSessions();
   }, []);
 
   /////////////////////////////////
 
-   // Check if the user is loaded and signed in
-   useEffect(() => {
+  // Check if the user is loaded and signed in
+  useEffect(() => {
     if (isLoaded && isSignedIn) {
       // You can set the logged-in user details here
       console.log("User Info:", user);
@@ -112,30 +112,30 @@ export default function PoolClubManager() {
   }, [isLoaded, isSignedIn, user]);
 
 
-  const handleStartGame = async (occupant: string,tableId: number) => {
+  const handleStartGame = async (occupant: string, tableId: number) => {
 
     try {
-    
-     await startGame(tableId, occupant,user?.firstName??'',user?.id??'');
+
+      await startGame(tableId, occupant, user?.firstName ?? '', user?.id ?? '');
       setStartGameDialogOpen(false)
-       setTableToStart(null)
+      setTableToStart(null)
       fetchBilliardTableSessions(); // Recall List API
-      toast.success("Game Started for Table No: "+ tableId , {
+      toast.success("Game Started for Table No: " + tableId, {
         autoClose: 5000,
       });
     } catch {
-        toast.error("Failed to start the game. Please try again.");
-      } 
+      toast.error("Failed to start the game. Please try again.");
+    }
   };
-  
+
 
   const showStartGameDialog = (tableId: number) => {
     const table = poolTables.find(t => t.id === tableId)
     if (table) {
       if (table.occupant.trim() === "") {
         toast.error("Please enter player's name to continue", {
-            autoClose: 5000,
-          });
+          autoClose: 5000,
+        });
         return
       }
       setTableToStart(table)
@@ -160,16 +160,16 @@ export default function PoolClubManager() {
     }
   }
 
-const finalizeEndGame = async () => {
+  const finalizeEndGame = async () => {
     try {
-           if (currentTable && billBreakdown) {
-         //Call End API
-         await endGame(currentTable.id,billBreakdown.totalMinutes,billBreakdown.initialCharge,billBreakdown.additionalCharge,
-            billBreakdown.totalBill,user?.firstName??'',user?.id??'');
-         setEndGameReceiptOpen(false)
-         setCurrentTable(null)
-         setBillBreakdown(null)
-     }
+      if (currentTable && billBreakdown) {
+        //Call End API
+        await endGame(currentTable.id, billBreakdown.totalMinutes, billBreakdown.initialCharge, billBreakdown.additionalCharge,
+          billBreakdown.totalBill, user?.firstName ?? '', user?.id ?? '');
+        setEndGameReceiptOpen(false)
+        setCurrentTable(null)
+        setBillBreakdown(null)
+      }
       fetchBilliardTableSessions(); // Recall List API
       toast.success("Game successfully ended.", {
         autoClose: 5000,
@@ -191,7 +191,7 @@ const finalizeEndGame = async () => {
         0, // Zero out seconds
         0  // Zero out milliseconds
       );
-  
+
       const endTime = new Date(
         table.endTime.getFullYear(),
         table.endTime.getMonth(),
@@ -201,19 +201,19 @@ const finalizeEndGame = async () => {
         0, // Zero out seconds
         0  // Zero out milliseconds
       );
-  
+
       // Calculate duration in minutes (ignoring seconds)
       const durationInMinutes = Math.ceil(
         (endTime.getTime() - startTime.getTime()) / (1000 * 60)
       );
-  
+
       const hourlyRate = 950;
       const perMinuteRate = hourlyRate / 60; // Rate per minute
-  
+
       let totalBill = 0;
       let fullHours = 0;
       let additionalMinutes = 0;
-  
+
       // Case 1: If duration is 0 minutes, total bill should be 0
       if (durationInMinutes <= 0) {
         return {
@@ -224,7 +224,7 @@ const finalizeEndGame = async () => {
           additionalMinutes: 0,
         };
       }
-  
+
       // Case 2: For up to 63 minutes, the total bill is 950
       if (durationInMinutes <= 63) {
         totalBill = hourlyRate;
@@ -234,13 +234,13 @@ const finalizeEndGame = async () => {
         // Case 3: For durations greater than 65 minutes, calculate the total bill
         fullHours = Math.floor(durationInMinutes / 60); // Full 60-minute blocks
         additionalMinutes = durationInMinutes % 60; // Minutes beyond full hours
-  
+
         totalBill = fullHours * hourlyRate; // Charge for full hours
         totalBill += additionalMinutes * perMinuteRate; // Charge for additional minutes after full hours
       }
-  
+
       totalBill = parseFloat(totalBill.toFixed(2)); // Ensure two decimal precision
-  
+
       return {
         initialCharge: hourlyRate,
         additionalCharge: totalBill > hourlyRate ? totalBill - hourlyRate : 0,
@@ -249,7 +249,7 @@ const finalizeEndGame = async () => {
         additionalMinutes,
       };
     }
-  
+
     // Return empty breakdown if startTime or endTime is missing
     return {
       initialCharge: 0,
@@ -259,13 +259,13 @@ const finalizeEndGame = async () => {
       additionalMinutes: 0,
     };
   };
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -273,18 +273,20 @@ const finalizeEndGame = async () => {
 
 
   return (
-    
+
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 p-4">
-  <div className="container mx-auto">
-    <div className="mb-8 flex items-center justify-between rounded-lg bg-white bg-opacity-80 p-4 shadow-lg backdrop-blur-sm">
-      <h1 className="text-3xl font-bold text-gray-900">TGC Pool Club Table Management</h1>
-      <button
-        onClick={() => window.location.href = '/details'}
-        className="ml-auto text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none"
-      >
-      Past Sessions
-      </button>
-    </div>
+      <div className="container mx-auto">
+        <div className="mb-8 flex items-center justify-between rounded-lg bg-white bg-opacity-80 p-4 shadow-lg backdrop-blur-sm">
+          <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900">Table Management</h1>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => window.location.href = '/details'}
+              className="text-[10px] sm:text-sm text-white bg-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-colors whitespace-nowrap"
+            >
+              Past Sessions
+            </button>
+          </div>
+        </div>
 
 
 
@@ -315,7 +317,7 @@ const finalizeEndGame = async () => {
                           placeholder="Enter player name"
                           value={table.occupant}
                           onChange={(e) => {
-                            setPoolTables(poolTables.map(t => 
+                            setPoolTables(poolTables.map(t =>
                               t.id === table.id ? { ...t, occupant: e.target.value } : t
                             ))
                           }}
@@ -467,26 +469,26 @@ const finalizeEndGame = async () => {
               </div>
             </div>
           )}
-    
-    <DialogFooter className="sm:justify-start">
 
-  <Button
-    type="button"
-    onClick={finalizeEndGame}
-    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-  >
-    Close Game
-  </Button>
-  <Button type="button" className="bg-red-500 hover:bg-red-600" variant="primary" onClick={() => setEndGameReceiptOpen(false)}>
+          <DialogFooter className="sm:justify-start">
+
+            <Button
+              type="button"
+              onClick={finalizeEndGame}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              Close Game
+            </Button>
+            <Button type="button" className="bg-red-500 hover:bg-red-600" variant="primary" onClick={() => setEndGameReceiptOpen(false)}>
               Cancel
             </Button>
-</DialogFooter>
+          </DialogFooter>
 
 
         </DialogContent>
       </Dialog>
     </div>
-    
+
   )
 }
 

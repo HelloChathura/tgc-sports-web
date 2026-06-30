@@ -192,14 +192,23 @@ const DataGrid = () => {
     <div className="mb-8 flex flex-col rounded-2xl bg-white p-6 shadow-xl relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-64 h-64 bg-gradient-to-br from-blue-100 via-green-50 to-purple-100 opacity-60 blur-3xl rounded-full"></div>
       
-      <div className="flex flex-row justify-between items-start md:items-center relative z-10 mb-6">
-        <h1 className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 tracking-tight whitespace-nowrap">Billiard Table Sessions</h1>
-        <button
-          onClick={() => window.location.href = '/dashboard'}
-          className="text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
-        >
-          Back to Dashboard
-        </button>
+      <div className="flex flex-row items-center justify-between gap-2 md:items-center md:justify-between relative z-10 mb-6">
+        <h1 className="text-[0.8rem] sm:text-xl md:text-3xl font-bold text-gray-900 tracking-tight whitespace-nowrap">Billiard Table Sessions</h1>
+        <div className="flex min-w-0 items-center gap-1 rounded-full bg-gray-100 px-2 py-1">
+          <button
+            onClick={() => window.location.href = '/dashboard'}
+            className="text-[0.65rem] sm:text-sm font-semibold text-gray-700 transition-colors hover:text-gray-900 whitespace-nowrap"
+          >
+            Back to Dashboard
+          </button>
+          <span className="text-gray-400">|</span>
+          <button
+            onClick={() => window.location.href = '/reports'}
+            className="text-[0.65rem] sm:text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700 whitespace-nowrap"
+          >
+            Reports
+          </button>
+        </div>
       </div>
       
       <div className="flex flex-row justify-between gap-2 md:gap-4 relative z-10 w-full">

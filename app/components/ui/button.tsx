@@ -4,6 +4,8 @@ interface ButtonProps {
     type?: "button" | "submit" | "reset";
     className?: string;
     variant?: "primary" | "outline" | "solid" | "text" | "destructive" | "secondary";
+    disabled?: boolean;
+    title?: string;
   }
   
   export const Button: React.FC<ButtonProps> = ({
@@ -12,6 +14,8 @@ interface ButtonProps {
     type = "button",
     className = "",
     variant = "solid",
+    disabled = false,
+    title,
   }) => {
     // Define base button styles
     const baseClasses = "py-2 px-4 rounded-md focus:outline-none focus:ring-2";
@@ -31,10 +35,11 @@ interface ButtonProps {
         : ""; // Default style if no variant is provided
   
     // Combine the base and variant-specific styles, and add custom classes
-    const buttonClasses = `${baseClasses} ${variantClasses} ${className}`;
+    const disabledClasses = disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : "";
+    const buttonClasses = `${baseClasses} ${variantClasses} ${disabledClasses} ${className}`;
   
     return (
-      <button onClick={onClick} type={type} className={buttonClasses}>
+      <button onClick={onClick} type={type} className={buttonClasses} disabled={disabled} title={title}>
         {children}
       </button>
     );

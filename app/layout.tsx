@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import ClientRedirect from "@/app/components/clientredirects"; // Import ClientRedirect
+import ClerkAuthHeader from "@/app/components/clerk-auth-header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -49,14 +50,7 @@ export default function RootLayout({
             }}
           >
             <div></div>
-            <div>
-              <SignedOut>
-                <SignInButton mode="modal" />
-              </SignedOut>
-              <SignedIn>
-                <UserButton showName />
-              </SignedIn>
-            </div>
+            <ClerkAuthHeader />
           </header>
           {/* Include the ClientRedirect component */}
           <ClientRedirect />
